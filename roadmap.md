@@ -1,0 +1,4 @@
+- [ ] Build KalaSetu AI visual system and shared app shell
+- [ ] Add landing, artisan onboarding, dashboard, catalogue, opportunities, enquiries, products, and profile flows
+- [ ] Add buyer requirement, matching, and artisan profile flows
+- [ ] Validate routes, responsive layout, and build diagnostics
