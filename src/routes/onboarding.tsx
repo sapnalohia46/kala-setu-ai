@@ -4,7 +4,7 @@ import { Brand, Button, DemoBanner, VoiceButton } from "@/components/kala/ui";
 import { languages } from "@/lib/kala-data";
 
 export const Route = createFileRoute("/onboarding")({
-  head: () => ({ meta: [{ title: "Join as an Artisan — KalaSetu AI" }, { name: "description", content: "Start a simple, voice-friendly artisan onboarding journey with KalaSetu AI." }, { property: "og:title", content: "Join as an Artisan — KalaSetu AI" }, { property: "og:description", content: "Create your craft profile in a few simple steps." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary_large_image" }] }),
+  head: () => ({ meta: [{ title: "Join as an Artisan — sih 2026" }, { name: "description", content: "Start a simple, voice-friendly artisan onboarding journey with sih 2026." }, { property: "og:title", content: "Join as an Artisan — sih 2026" }, { property: "og:description", content: "Create your craft profile in a few simple steps." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary_large_image" }] }),
   component: Onboarding,
 });
 

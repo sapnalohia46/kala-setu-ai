@@ -77,10 +77,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-       { title: "KalaSetu AI — From Craft to Market" },
+       { title: "sih 2026 — From Craft to Market" },
        { name: "description", content: "AI-powered market linkage and smart cataloguing for Indian artisans." },
-       { name: "author", content: "KalaSetu AI" },
-       { property: "og:title", content: "KalaSetu AI — From Craft to Market" },
+       { name: "author", content: "sih 2026" },
+       { property: "og:title", content: "sih 2026 — From Craft to Market" },
        { property: "og:description", content: "AI-powered market linkage and smart cataloguing for Indian artisans." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

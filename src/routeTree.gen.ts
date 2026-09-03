@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AddProductRouteImport } from './routes/add-product'
+import { Route as BuyerRouteImport } from './routes/buyer'
 import { Route as CatalogueRouteImport } from './routes/catalogue'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as EnquiriesRouteImport } from './routes/enquiries'
@@ -19,6 +20,11 @@ import { Route as OpportunitiesRouteImport } from './routes/opportunities'
 import { Route as ProductsRouteImport } from './routes/products'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as PublishSuccessRouteImport } from './routes/publish-success'
+import { Route as ArtisanIdRouteImport } from './routes/artisan.$id'
+import { Route as BuyerEnquiriesRouteImport } from './routes/buyer.enquiries'
+import { Route as BuyerMatchesRouteImport } from './routes/buyer.matches'
+import { Route as BuyerProfileRouteImport } from './routes/buyer.profile'
+import { Route as BuyerRequirementsRouteImport } from './routes/buyer.requirements'
 import { Route as OpportunitiesIdRouteImport } from './routes/opportunities.$id'
 
 const IndexRoute = IndexRouteImport.update({
@@ -29,6 +35,11 @@ const IndexRoute = IndexRouteImport.update({
 const AddProductRoute = AddProductRouteImport.update({
   id: '/add-product',
   path: '/add-product',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BuyerRoute = BuyerRouteImport.update({
+  id: '/buyer',
+  path: '/buyer',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CatalogueRoute = CatalogueRouteImport.update({
@@ -71,6 +82,31 @@ const PublishSuccessRoute = PublishSuccessRouteImport.update({
   path: '/publish-success',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ArtisanIdRoute = ArtisanIdRouteImport.update({
+  id: '/artisan/$id',
+  path: '/artisan/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BuyerEnquiriesRoute = BuyerEnquiriesRouteImport.update({
+  id: '/enquiries',
+  path: '/enquiries',
+  getParentRoute: () => BuyerRoute,
+} as any)
+const BuyerMatchesRoute = BuyerMatchesRouteImport.update({
+  id: '/matches',
+  path: '/matches',
+  getParentRoute: () => BuyerRoute,
+} as any)
+const BuyerProfileRoute = BuyerProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => BuyerRoute,
+} as any)
+const BuyerRequirementsRoute = BuyerRequirementsRouteImport.update({
+  id: '/requirements',
+  path: '/requirements',
+  getParentRoute: () => BuyerRoute,
+} as any)
 const OpportunitiesIdRoute = OpportunitiesIdRouteImport.update({
   id: '/$id',
   path: '/$id',
@@ -80,6 +116,7 @@ const OpportunitiesIdRoute = OpportunitiesIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/add-product': typeof AddProductRoute
+  '/buyer': typeof BuyerRouteWithChildren
   '/catalogue': typeof CatalogueRoute
   '/dashboard': typeof DashboardRoute
   '/enquiries': typeof EnquiriesRoute
@@ -88,11 +125,17 @@ export interface FileRoutesByFullPath {
   '/products': typeof ProductsRoute
   '/profile': typeof ProfileRoute
   '/publish-success': typeof PublishSuccessRoute
+  '/artisan/$id': typeof ArtisanIdRoute
+  '/buyer/enquiries': typeof BuyerEnquiriesRoute
+  '/buyer/matches': typeof BuyerMatchesRoute
+  '/buyer/profile': typeof BuyerProfileRoute
+  '/buyer/requirements': typeof BuyerRequirementsRoute
   '/opportunities/$id': typeof OpportunitiesIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/add-product': typeof AddProductRoute
+  '/buyer': typeof BuyerRouteWithChildren
   '/catalogue': typeof CatalogueRoute
   '/dashboard': typeof DashboardRoute
   '/enquiries': typeof EnquiriesRoute
@@ -101,12 +144,18 @@ export interface FileRoutesByTo {
   '/products': typeof ProductsRoute
   '/profile': typeof ProfileRoute
   '/publish-success': typeof PublishSuccessRoute
+  '/artisan/$id': typeof ArtisanIdRoute
+  '/buyer/enquiries': typeof BuyerEnquiriesRoute
+  '/buyer/matches': typeof BuyerMatchesRoute
+  '/buyer/profile': typeof BuyerProfileRoute
+  '/buyer/requirements': typeof BuyerRequirementsRoute
   '/opportunities/$id': typeof OpportunitiesIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/add-product': typeof AddProductRoute
+  '/buyer': typeof BuyerRouteWithChildren
   '/catalogue': typeof CatalogueRoute
   '/dashboard': typeof DashboardRoute
   '/enquiries': typeof EnquiriesRoute
@@ -115,6 +164,11 @@ export interface FileRoutesById {
   '/products': typeof ProductsRoute
   '/profile': typeof ProfileRoute
   '/publish-success': typeof PublishSuccessRoute
+  '/artisan/$id': typeof ArtisanIdRoute
+  '/buyer/enquiries': typeof BuyerEnquiriesRoute
+  '/buyer/matches': typeof BuyerMatchesRoute
+  '/buyer/profile': typeof BuyerProfileRoute
+  '/buyer/requirements': typeof BuyerRequirementsRoute
   '/opportunities/$id': typeof OpportunitiesIdRoute
 }
 export interface FileRouteTypes {
@@ -122,6 +176,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/add-product'
+    | '/buyer'
     | '/catalogue'
     | '/dashboard'
     | '/enquiries'
@@ -130,11 +185,17 @@ export interface FileRouteTypes {
     | '/products'
     | '/profile'
     | '/publish-success'
+    | '/artisan/$id'
+    | '/buyer/enquiries'
+    | '/buyer/matches'
+    | '/buyer/profile'
+    | '/buyer/requirements'
     | '/opportunities/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/add-product'
+    | '/buyer'
     | '/catalogue'
     | '/dashboard'
     | '/enquiries'
@@ -143,11 +204,17 @@ export interface FileRouteTypes {
     | '/products'
     | '/profile'
     | '/publish-success'
+    | '/artisan/$id'
+    | '/buyer/enquiries'
+    | '/buyer/matches'
+    | '/buyer/profile'
+    | '/buyer/requirements'
     | '/opportunities/$id'
   id:
     | '__root__'
     | '/'
     | '/add-product'
+    | '/buyer'
     | '/catalogue'
     | '/dashboard'
     | '/enquiries'
@@ -156,12 +223,18 @@ export interface FileRouteTypes {
     | '/products'
     | '/profile'
     | '/publish-success'
+    | '/artisan/$id'
+    | '/buyer/enquiries'
+    | '/buyer/matches'
+    | '/buyer/profile'
+    | '/buyer/requirements'
     | '/opportunities/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AddProductRoute: typeof AddProductRoute
+  BuyerRoute: typeof BuyerRouteWithChildren
   CatalogueRoute: typeof CatalogueRoute
   DashboardRoute: typeof DashboardRoute
   EnquiriesRoute: typeof EnquiriesRoute
@@ -170,6 +243,7 @@ export interface RootRouteChildren {
   ProductsRoute: typeof ProductsRoute
   ProfileRoute: typeof ProfileRoute
   PublishSuccessRoute: typeof PublishSuccessRoute
+  ArtisanIdRoute: typeof ArtisanIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -186,6 +260,13 @@ declare module '@tanstack/react-router' {
       path: '/add-product'
       fullPath: '/add-product'
       preLoaderRoute: typeof AddProductRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/buyer': {
+      id: '/buyer'
+      path: '/buyer'
+      fullPath: '/buyer'
+      preLoaderRoute: typeof BuyerRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/catalogue': {
@@ -244,6 +325,41 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PublishSuccessRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/artisan/$id': {
+      id: '/artisan/$id'
+      path: '/artisan/$id'
+      fullPath: '/artisan/$id'
+      preLoaderRoute: typeof ArtisanIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/buyer/enquiries': {
+      id: '/buyer/enquiries'
+      path: '/enquiries'
+      fullPath: '/buyer/enquiries'
+      preLoaderRoute: typeof BuyerEnquiriesRouteImport
+      parentRoute: typeof BuyerRoute
+    }
+    '/buyer/matches': {
+      id: '/buyer/matches'
+      path: '/matches'
+      fullPath: '/buyer/matches'
+      preLoaderRoute: typeof BuyerMatchesRouteImport
+      parentRoute: typeof BuyerRoute
+    }
+    '/buyer/profile': {
+      id: '/buyer/profile'
+      path: '/profile'
+      fullPath: '/buyer/profile'
+      preLoaderRoute: typeof BuyerProfileRouteImport
+      parentRoute: typeof BuyerRoute
+    }
+    '/buyer/requirements': {
+      id: '/buyer/requirements'
+      path: '/requirements'
+      fullPath: '/buyer/requirements'
+      preLoaderRoute: typeof BuyerRequirementsRouteImport
+      parentRoute: typeof BuyerRoute
+    }
     '/opportunities/$id': {
       id: '/opportunities/$id'
       path: '/$id'
@@ -253,6 +369,22 @@ declare module '@tanstack/react-router' {
     }
   }
 }
+
+interface BuyerRouteChildren {
+  BuyerEnquiriesRoute: typeof BuyerEnquiriesRoute
+  BuyerMatchesRoute: typeof BuyerMatchesRoute
+  BuyerProfileRoute: typeof BuyerProfileRoute
+  BuyerRequirementsRoute: typeof BuyerRequirementsRoute
+}
+
+const BuyerRouteChildren: BuyerRouteChildren = {
+  BuyerEnquiriesRoute: BuyerEnquiriesRoute,
+  BuyerMatchesRoute: BuyerMatchesRoute,
+  BuyerProfileRoute: BuyerProfileRoute,
+  BuyerRequirementsRoute: BuyerRequirementsRoute,
+}
+
+const BuyerRouteWithChildren = BuyerRoute._addFileChildren(BuyerRouteChildren)
 
 interface OpportunitiesRouteChildren {
   OpportunitiesIdRoute: typeof OpportunitiesIdRoute
@@ -269,6 +401,7 @@ const OpportunitiesRouteWithChildren = OpportunitiesRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AddProductRoute: AddProductRoute,
+  BuyerRoute: BuyerRouteWithChildren,
   CatalogueRoute: CatalogueRoute,
   DashboardRoute: DashboardRoute,
   EnquiriesRoute: EnquiriesRoute,
@@ -277,6 +410,7 @@ const rootRouteChildren: RootRouteChildren = {
   ProductsRoute: ProductsRoute,
   ProfileRoute: ProfileRoute,
   PublishSuccessRoute: PublishSuccessRoute,
+  ArtisanIdRoute: ArtisanIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
