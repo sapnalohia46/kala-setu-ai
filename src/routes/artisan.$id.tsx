@@ -17,7 +17,7 @@ export const Route = createFileRoute("/artisan/$id")({
   component: ArtisanProfile,
 });
 
-const fallbackArtisan = artisans[0] ?? demoArtisan;
+const fallbackArtisan: (typeof artisans)[number] = artisans[0]!;
 
 function ArtisanProfile() {
   const { id } = Route.useParams();
