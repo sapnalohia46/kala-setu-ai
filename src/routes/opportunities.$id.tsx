@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { ArrowLeft, ArrowRight, Check, ChevronRight, MapPin, MessageCircle, Package, Sparkles, UsersRound } from "lucide-react";
-import { opportunities } from "@/lib/kala-data";
+import { opportunities, type Opportunity } from "@/lib/kala-data";
 import { AppShell, Button, DemoBanner, MatchBar, Score, SectionHeading } from "@/components/kala/ui";
 import { OpportunityMeta } from "@/components/kala/cards";
 
