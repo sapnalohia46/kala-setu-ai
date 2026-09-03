@@ -5,7 +5,7 @@ import { ArrowRight, BadgeCheck, Bell, BriefcaseBusiness, ChevronLeft, CircleUse
 
 export function Brand({ compact = false }: { compact?: boolean }) {
   return <Link to="/" className="group flex items-center gap-3" aria-label="sih 2026 home">
-    <span className="grid size-10 place-items-center rounded-2xl bg-indigo text-primary-foreground shadow-sm transition-transform group-hover:-rotate-3"><span className="font-display text-lg font-bold">क</span></span>
+    <span className="grid size-10 place-items-center rounded-2xl bg-indigo text-primary-foreground shadow-sm transition-transform group-hover:-rotate-3"><span className="font-display text-base font-bold">SI</span></span>
     {!compact && <span className="leading-none"><span className="block font-display text-lg font-bold text-ink">sih 2026 <span className="text-terracotta">AI</span></span><span className="mt-1 block font-mono text-[9px] uppercase tracking-[.19em] text-muted-foreground">Craft to market</span></span>}
   </Link>;
 }
