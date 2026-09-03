@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, Eye, MessageCircle, PackageOpen, Plus, Sparkles } from "lucide-react";
-import { opportunities, products, demoArtisan, enquiries } from "@/lib/kala-data";
+import { opportunities, products, demoArtisan, enquiries, type Enquiry } from "@/lib/kala-data";
 import { AppShell, Button, DemoBanner, SectionHeading } from "@/components/kala/ui";
 import { MiniOpportunity } from "@/components/kala/cards";
 
