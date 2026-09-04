@@ -1,4 +1,4 @@
-# Kala Connect
+# sih 2026
 
 Build a polished, modern, mobile-first web application prototype for Smart India Hackathon 2026.
 
