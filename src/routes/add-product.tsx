@@ -34,12 +34,20 @@ function AddProduct() {
     reader.readAsDataURL(file);
   }
 
-  function handleGenerate() {
-    if (!photo && !spoken.trim()) { setPhotoError("Add a photo or describe your craft first."); return; }
+  async function handleGenerate() {
+    if (!photo) { setPhotoError("Add a photo of your craft first."); return; }
+    setPhotoError(null);
     setBusy(true);
     if (speech.listening) speech.stop();
-    updateDraft(generateCatalogue({ photo, transcript: spoken }));
-    window.setTimeout(() => navigate({ to: "/catalogue" }), 700);
+    try {
+      const draft = await generateCatalogueFromBackend({ photo, transcript: spoken });
+      updateDraft(draft);
+      navigate({ to: "/catalogue" });
+    } catch (error) {
+      setPhotoError(error instanceof Error ? error.message : "We could not create your catalogue. Please try again.");
+    } finally {
+      setBusy(false);
+    }
   }
 
   return <AppShell title="Add your craft" eyebrow="New product"><div className="mx-auto max-w-4xl">
