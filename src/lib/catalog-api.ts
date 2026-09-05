@@ -56,9 +56,14 @@ export async function generateCatalogueFromBackend(input: { photo: string | null
   if (input.transcript.trim()) form.append("audio_transcript_or_text", input.transcript.trim());
   form.append("source_language", input.language ?? "hi");
 
-  const response = await fetch(`${BASE_URL}/api/v1/catalog/auto-generate`, { method: "POST", body: form });
-  if (!response.ok) throw new Error(`The catalogue service could not read this photo (error ${response.status}).`);
+  try {
+    const response = await fetch(`${BASE_URL}/api/v1/catalog/auto-generate`, { method: "POST", mode: "cors", body: form });
+    if (!response.ok) throw new Error(`The catalogue service could not read this photo (status ${response.status}).`);
 
-  const data = (await response.json()) as BackendCatalog;
-  return mapCatalog(data, input.photo, input.transcript);
+    const data = (await response.json()) as BackendCatalog;
+    return mapCatalog(data, input.photo, input.transcript);
+  } catch (error) {
+    console.error("API Error Detail:", error);
+    throw error;
+  }
 }
