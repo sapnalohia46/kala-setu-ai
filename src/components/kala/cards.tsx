@@ -1,16 +1,5 @@
 import React, { useState } from "react";
 import { Link } from "@tanstack/react-router";
-import {
-  ArrowRight,
-  CalendarDays,
-  ChevronRight,
-  MapPin,
-  Package,
-  Sparkles,
-  UsersRound,
-  UserCheck,
-  ShoppingBag,
-} from "lucide-react";
 import { opportunities, type Opportunity } from "@/lib/kala-data";
 import { Button, MatchBar, Score, StatusBadge } from "@/components/kala/ui";
 
@@ -80,7 +69,7 @@ export default function Kal() {
             activeTab === "karigar" ? "bg-white text-indigo-600 shadow-sm" : "text-gray-500 hover:text-gray-700"
           }`}
         >
-          <UserCheck className="size-4" /> Karigar KYC
+          👤 Karigar KYC
         </button>
         <button
           type="button"
@@ -89,7 +78,7 @@ export default function Kal() {
             activeTab === "buyer" ? "bg-white text-indigo-600 shadow-sm" : "text-gray-500 hover:text-gray-700"
           }`}
         >
-          <ShoppingBag className="size-4" /> Buyer Enquiry
+          🛍️ Buyer Enquiry
         </button>
       </div>
 
@@ -402,7 +391,7 @@ export function OpportunityCard({ opportunity, compact = false }: { opportunity:
           params={{ id: opportunity.id }}
           className="flex min-h-11 flex-1 items-center justify-center gap-2 rounded-xl border border-border px-3 py-2.5 text-sm font-semibold text-foreground transition-colors hover:bg-muted"
         >
-          View opportunity <ArrowRight className="size-4" />
+          View opportunity →
         </Link>
         {!compact && (
           <Button
@@ -428,9 +417,7 @@ export function MiniOpportunity({ opportunity }: { opportunity: Opportunity }) {
       params={{ id: opportunity.id }}
       className="group flex items-center gap-3 rounded-xl border border-border bg-card p-3 transition-colors hover:bg-muted"
     >
-      <div className="grid size-10 shrink-0 place-items-center rounded-xl bg-saffron/20 text-terracotta">
-        <Sparkles className="size-4" />
-      </div>
+      <div className="grid size-10 shrink-0 place-items-center rounded-xl bg-saffron/20 text-terracotta">✨</div>
       <div className="min-w-0 flex-1">
         <p className="truncate text-sm font-semibold text-ink">{opportunity.title}</p>
         <p className="mt-0.5 text-xs text-muted-foreground">
@@ -441,7 +428,7 @@ export function MiniOpportunity({ opportunity }: { opportunity: Opportunity }) {
         <p className="font-display font-bold text-indigo">{opportunity.score}%</p>
         <p className="font-mono text-[9px] uppercase tracking-[.1em] text-muted-foreground">match</p>
       </div>
-      <ChevronRight className="size-4 text-muted-foreground transition-transform group-hover:translate-x-0.5" />
+      <span className="text-muted-foreground transition-transform group-hover:translate-x-0.5">›</span>
     </Link>
   );
 }
@@ -450,28 +437,28 @@ export function OpportunityMeta({ opportunity }: { opportunity: Opportunity }) {
   return (
     <div className="grid gap-3 sm:grid-cols-2">
       <div className="flex gap-3 rounded-xl bg-muted/60 p-3">
-        <UsersRound className="mt-0.5 size-4 text-terracotta" />
+        <span className="mt-0.5 text-terracotta">👥</span>
         <div>
           <p className="text-xs text-muted-foreground">Buyer</p>
           <p className="mt-0.5 text-sm font-semibold">{opportunity.buyer}</p>
         </div>
       </div>
       <div className="flex gap-3 rounded-xl bg-muted/60 p-3">
-        <Package className="mt-0.5 size-4 text-terracotta" />
+        <span className="mt-0.5 text-terracotta">📦</span>
         <div>
           <p className="text-xs text-muted-foreground">Requirement</p>
           <p className="mt-0.5 text-sm font-semibold">{opportunity.quantity}</p>
         </div>
       </div>
       <div className="flex gap-3 rounded-xl bg-muted/60 p-3">
-        <MapPin className="mt-0.5 size-4 text-terracotta" />
+        <span className="mt-0.5 text-terracotta">📍</span>
         <div>
           <p className="text-xs text-muted-foreground">Location</p>
           <p className="mt-0.5 text-sm font-semibold">{opportunity.location}</p>
         </div>
       </div>
       <div className="flex gap-3 rounded-xl bg-muted/60 p-3">
-        <CalendarDays className="mt-0.5 size-4 text-terracotta" />
+        <span className="mt-0.5 text-terracotta">📅</span>
         <div>
           <p className="text-xs text-muted-foreground">Deadline</p>
           <p className="mt-0.5 text-sm font-semibold">{opportunity.deadline}</p>
