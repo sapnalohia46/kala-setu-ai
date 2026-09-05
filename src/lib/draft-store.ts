@@ -46,9 +46,9 @@ export function publishDraft(fallbackImage: string): Product {
   hydrate();
   const product: Product = {
     id: `draft-${Date.now()}`,
-    title: draft.title || "Handcrafted Jaipur Blue Pottery Vase",
-    category: draft.category || "Home Décor · Pottery",
-    price: draft.price || "₹950",
+    title: draft.title || "Untitled craft",
+    category: draft.category || "Handmade craft",
+    price: draft.price || "Price on request",
     status: "Published",
     image: draft.photo || fallbackImage,
     imageAlt: draft.title || "Newly published handmade craft product",
@@ -58,22 +58,4 @@ export function publishDraft(fallbackImage: string): Product {
   persist();
   emit();
   return product;
-}
-
-/** Mock "AI" enrichment from a photo + spoken description. */
-export function generateCatalogue(input: { photo: string | null; transcript: string }): Draft {
-  const text = input.transcript.toLowerCase();
-  const craft = text.includes("jute") ? "Natural Jute Craft" : text.includes("block") || text.includes("print") ? "Hand Block Printing" : text.includes("weav") || text.includes("textile") ? "Handwoven Textiles" : "Jaipur Blue Pottery";
-  const material = craft === "Natural Jute Craft" ? "Jute fibre" : craft === "Jaipur Blue Pottery" ? "Ceramic" : "Cotton";
-  return {
-    photo: input.photo,
-    transcript: input.transcript,
-    title: craft === "Jaipur Blue Pottery" ? "Handcrafted Jaipur Blue Pottery Vase" : `Handcrafted ${craft} Piece`,
-    category: craft === "Jaipur Blue Pottery" ? "Home Décor → Traditional Pottery" : "Home Décor → Handmade",
-    craft,
-    material,
-    price: "₹850 – ₹1,050",
-    description: input.transcript.trim() ? `${input.transcript.trim()} Made slowly by hand, each piece carries the quiet character of traditional craft.` : "A hand-painted piece featuring intricate traditional motifs, made slowly by hand for homes that value story and detail.",
-    tags: ["Handmade", "Traditional Craft", craft, "Home Décor"],
-  };
 }
