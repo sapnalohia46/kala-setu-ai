@@ -92,7 +92,7 @@ function Catalogue() {
           <Button variant="quiet" onClick={regenerate} disabled={regenerating}><WandSparkles className="size-4" />Refresh from AI</Button>
         </div>
         {apiError && <p role="alert" className="mt-3 text-sm font-medium text-destructive">{apiError}</p>}
-        <Button className="mt-3 min-h-12 w-full" onClick={() => { publishDraft(pottery); navigate({ to: "/publish-success" }); }}>Confirm &amp; publish <Check className="size-4" /></Button>
+        <Button className="mt-3 min-h-12 w-full" onClick={handlePublish} disabled={publishing}>{publishing ? "Publishing…" : "Confirm & publish"} <Check className="size-4" /></Button>
       </div>
     </div>
   </div></AppShell>;
