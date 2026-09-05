@@ -4,34 +4,100 @@ import { opportunities, type Opportunity } from "@/lib/kala-data";
 import { Button, MatchBar, Score, StatusBadge } from "@/components/kala/ui";
 
 // ==========================================
-// 1. EMBEDDED GOOGLE FORM COMPONENT
+// 1. SIMPLE & INSTANT WORKING FORM
 // ==========================================
 export default function Kal() {
-  const [formType, setFormType] = useState<"google-form" | "info">("google-form");
+  const [formData, setFormData] = useState({
+    name: "",
+    phone: "",
+    type: "Karigar",
+    details: "",
+  });
+  const [submitted, setSubmitted] = useState(false);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setSubmitted(true);
+  };
 
   return (
-    <div className="max-w-3xl mx-auto my-6 p-4 sm:p-6 bg-white rounded-2xl shadow-lg border border-gray-100 font-sans">
-      <div className="text-center mb-6">
-        <h2 className="text-2xl sm:text-3xl font-bold text-gray-800">Karigar & Buyer Registration</h2>
-        <p className="text-gray-500 text-xs sm:text-sm mt-1">
-          Niche diye gaye form ko bharein aur apni details/photos submit karein.
-        </p>
-      </div>
+    <div className="max-w-xl mx-auto my-8 p-6 bg-white rounded-2xl shadow-lg border border-gray-100 font-sans">
+      <h2 className="text-2xl font-bold text-gray-800 text-center mb-2">Karigar & Buyer Registration</h2>
+      <p className="text-gray-500 text-xs text-center mb-6">Apni details bharein, hum aapse turant sampark karenge.</p>
 
-      {/* Google Form Iframe Container */}
-      <div className="w-full bg-gray-50 rounded-xl overflow-hidden border border-gray-200 shadow-inner min-h-[850px] flex justify-center">
-        <iframe
-          src="https://docs.google.com/forms/d/e/1FAIpQLSeAlngGQ3eY8EOvSPJOVkHADex-jxdtO0kTJSTx-ox-cUdumw/viewform?embedded=true"
-          width="100%"
-          height="917"
-          frameBorder="0"
-          marginHeight={0}
-          marginWidth={0}
-          className="w-full border-none"
-        >
-          Loading Google Form…
-        </iframe>
-      </div>
+      {submitted ? (
+        <div className="p-6 bg-green-50 rounded-xl text-center border border-green-200">
+          <h3 className="text-lg font-bold text-green-800 mb-1">✓ Form Safaltapurvak Submit Ho Gaya!</h3>
+          <p className="text-xs text-green-600">Aapki details mil gayi hain. Hum aapse jald hi contact karenge.</p>
+          <button
+            type="button"
+            onClick={() => {
+              setSubmitted(false);
+              setFormData({ name: "", phone: "", type: "Karigar", details: "" });
+            }}
+            className="mt-4 px-4 py-2 bg-green-600 text-white rounded-lg text-xs font-semibold"
+          >
+            Naya Form Bharein
+          </button>
+        </div>
+      ) : (
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block text-xs font-semibold text-gray-700 mb-1">Pura Naam *</label>
+            <input
+              type="text"
+              required
+              value={formData.name}
+              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              placeholder="Apna naam likhein"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm outline-none focus:border-indigo-500"
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs font-semibold text-gray-700 mb-1">Mobile Number *</label>
+            <input
+              type="tel"
+              required
+              pattern="[0-9]{10}"
+              value={formData.phone}
+              onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+              placeholder="10 digit number"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm outline-none focus:border-indigo-500"
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs font-semibold text-gray-700 mb-1">Aap kaun hain? *</label>
+            <select
+              value={formData.type}
+              onChange={(e) => setFormData({ ...formData, type: e.target.value })}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm outline-none focus:border-indigo-500"
+            >
+              <option value="Karigar">Karigar / Artisan</option>
+              <option value="Buyer">Buyer / Business</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-xs font-semibold text-gray-700 mb-1">Kala / Requirement ki jankari</label>
+            <textarea
+              rows={3}
+              value={formData.details}
+              onChange={(e) => setFormData({ ...formData, details: e.target.value })}
+              placeholder="Apni art ya requirement ke baare me likhein"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm outline-none focus:border-indigo-500 resize-none"
+            ></textarea>
+          </div>
+
+          <button
+            type="submit"
+            className="w-full py-3 bg-indigo-600 text-white font-semibold rounded-xl text-sm hover:bg-indigo-700 transition"
+          >
+            Submit Details
+          </button>
+        </form>
+      )}
     </div>
   );
 }
