@@ -25,11 +25,31 @@ function Catalogue() {
     setApiError(null);
     setRegenerating(true);
     try {
-      updateDraft(await generateCatalogueFromBackend({ photo: draft.photo, transcript: draft.transcript }));
+      updateDraft(await generateCatalogue({ photo: draft.photo, transcript: draft.transcript }));
+      toast.success("Catalogue refreshed");
     } catch (error) {
-      setApiError(error instanceof Error ? error.message : "We could not refresh this catalogue.");
+      const message = error instanceof Error ? error.message : "We could not refresh this catalogue.";
+      setApiError(message);
+      toast.error(message);
     } finally {
       setRegenerating(false);
+    }
+  }
+
+  async function handlePublish() {
+    setApiError(null);
+    setPublishing(true);
+    try {
+      await saveProduct(draft);
+      publishDraft(pottery);
+      toast.success("Your product is published");
+      navigate({ to: "/publish-success" });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "We could not publish your product.";
+      setApiError(message);
+      toast.error(message);
+    } finally {
+      setPublishing(false);
     }
   }
 
