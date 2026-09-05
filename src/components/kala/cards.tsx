@@ -426,12 +426,18 @@ export default function Kal() {
                 ></textarea>
               </div>
 
+              {buyerError && (
+                <p className="rounded-lg bg-red-50 px-3 py-2 text-xs font-medium text-red-700">{buyerError}</p>
+              )}
+
               <button
                 type="submit"
-                className="w-full py-3 bg-indigo-600 text-white font-medium rounded-xl hover:bg-indigo-700 transition duration-200 text-sm shadow-md"
+                disabled={buyerBusy}
+                className="w-full py-3 bg-indigo-600 text-white font-medium rounded-xl hover:bg-indigo-700 transition duration-200 text-sm shadow-md disabled:opacity-60"
               >
-                Submit Buyer Requirement
+                {buyerBusy ? "Submitting…" : "Submit Buyer Requirement"}
               </button>
+
             </form>
           )}
         </>
