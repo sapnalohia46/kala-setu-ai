@@ -3,8 +3,9 @@ import { useState } from "react";
 import { ArrowLeft, Check, Edit3, Languages, RefreshCw, Sparkles, Tag, WandSparkles } from "lucide-react";
 import pottery from "@/assets/blue-pottery-vase.jpg";
 import { AppShell, Button, DemoBanner, SectionHeading } from "@/components/kala/ui";
+import { toast } from "sonner";
 import { publishDraft, updateDraft, useDraft } from "@/lib/draft-store";
-import { generateCatalogueFromBackend } from "@/lib/catalog-api";
+import { generateCatalogue, saveProduct } from "@/lib/catalog-api";
 
 export const Route = createFileRoute("/catalogue")({ head: () => ({ meta: [{ title: "AI Smart Catalogue — sih 2026" }, { name: "description", content: "Review and edit an AI-generated craft catalogue before publishing." }, { property: "og:title", content: "AI Smart Catalogue — sih 2026" }, { property: "og:description", content: "Review every AI suggestion before your craft goes to market." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary_large_image" }] }), component: Catalogue });
 
