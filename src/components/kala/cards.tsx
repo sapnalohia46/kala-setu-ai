@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { opportunities, type Opportunity } from "@/lib/kala-data";
 import { Button, MatchBar, Score, StatusBadge } from "@/components/kala/ui";
+import { supabase } from "@/integrations/supabase/client";
+
 
 // ==========================================
 // 1. COMBINED KARIGAR & BUYER FORM WITH PHOTO UPLOAD
@@ -19,6 +21,9 @@ export default function Kal() {
     photoName: "",
   });
   const [karigarSubmitted, setKarigarSubmitted] = useState(false);
+  const [photoFile, setPhotoFile] = useState<File | null>(null);
+  const [karigarBusy, setKarigarBusy] = useState(false);
+  const [karigarError, setKarigarError] = useState("");
 
   // Buyer Form State
   const [buyerData, setBuyerData] = useState({
@@ -31,6 +36,8 @@ export default function Kal() {
     notes: "",
   });
   const [buyerSubmitted, setBuyerSubmitted] = useState(false);
+  const [buyerBusy, setBuyerBusy] = useState(false);
+  const [buyerError, setBuyerError] = useState("");
 
   // Handlers
   const handleKarigarChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
@@ -43,30 +50,82 @@ export default function Kal() {
     setBuyerData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Local Photo Handle
+  // Photo select (uploaded to cloud storage on submit)
   const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      setKarigarData((prev) => ({ ...prev, photoName: file.name }));
-      alert(`Photo "${file.name}" select ho gayi hai!`);
-    }
-  };
-
-  const handleKarigarSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (karigarData.aadhaarNumber.length !== 12) {
-      alert("Kripya 12-digit ka sahi Aadhaar Number darj karein.");
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) {
+      setKarigarError("Photo 5MB se choti honi chahiye.");
       return;
     }
-    console.log("Karigar Form Data:", karigarData);
-    setKarigarSubmitted(true);
+    setKarigarError("");
+    setPhotoFile(file);
+    setKarigarData((prev) => ({ ...prev, photoName: file.name }));
   };
 
-  const handleBuyerSubmit = (e: React.FormEvent) => {
+  const handleKarigarSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Buyer Requirement Data:", buyerData);
-    setBuyerSubmitted(true);
+    if (karigarData.aadhaarNumber.length !== 12) {
+      setKarigarError("Kripya 12-digit ka sahi Aadhaar Number darj karein.");
+      return;
+    }
+    setKarigarBusy(true);
+    setKarigarError("");
+    try {
+      let photoPath: string | null = null;
+      if (photoFile) {
+        const ext = photoFile.name.split(".").pop() ?? "jpg";
+        const path = `${crypto.randomUUID()}.${ext}`;
+        const { error: uploadError } = await supabase.storage
+          .from("karigar-photos")
+          .upload(path, photoFile, { contentType: photoFile.type, upsert: false });
+        if (uploadError) throw uploadError;
+        photoPath = path;
+      }
+
+      const { error: insertError } = await supabase.from("karigar_kyc").insert({
+        full_name: karigarData.fullName,
+        phone: karigarData.phone,
+        aadhaar_number: karigarData.aadhaarNumber,
+        craft_type: karigarData.craftType,
+        address: karigarData.address || null,
+        photo_path: photoPath,
+      });
+      if (insertError) throw insertError;
+
+      setKarigarSubmitted(true);
+    } catch (error) {
+      console.error("Karigar KYC submit failed:", error);
+      setKarigarError("Submit nahi ho paya. Kripya dobara koshish karein.");
+    } finally {
+      setKarigarBusy(false);
+    }
   };
+
+  const handleBuyerSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setBuyerBusy(true);
+    setBuyerError("");
+    try {
+      const { error } = await supabase.from("buyer_enquiries").insert({
+        company_name: buyerData.companyName,
+        contact_person: buyerData.contactPerson,
+        email: buyerData.email,
+        phone: buyerData.phone,
+        requirement_type: buyerData.requirementType,
+        estimated_quantity: buyerData.estimatedQuantity,
+        notes: buyerData.notes || null,
+      });
+      if (error) throw error;
+      setBuyerSubmitted(true);
+    } catch (error) {
+      console.error("Buyer enquiry submit failed:", error);
+      setBuyerError("Requirement post nahi ho payi. Kripya dobara koshish karein.");
+    } finally {
+      setBuyerBusy(false);
+    }
+  };
+
 
   return (
     <div className="max-w-2xl mx-auto my-6 p-6 bg-white rounded-2xl shadow-lg border border-gray-100 font-sans">
@@ -123,6 +182,9 @@ export default function Kal() {
                     address: "",
                     photoName: "",
                   });
+                  setPhotoFile(null);
+                  setKarigarError("");
+
                 }}
                 className="mt-4 px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-medium hover:bg-green-700 transition"
               >
@@ -222,12 +284,18 @@ export default function Kal() {
                 ></textarea>
               </div>
 
+              {karigarError && (
+                <p className="rounded-lg bg-red-50 px-3 py-2 text-xs font-medium text-red-700">{karigarError}</p>
+              )}
+
               <button
                 type="submit"
-                className="w-full py-3 bg-indigo-600 text-white font-medium rounded-xl hover:bg-indigo-700 transition duration-200 text-sm shadow-md"
+                disabled={karigarBusy}
+                className="w-full py-3 bg-indigo-600 text-white font-medium rounded-xl hover:bg-indigo-700 transition duration-200 text-sm shadow-md disabled:opacity-60"
               >
-                Submit KYC Details
+                {karigarBusy ? "Uploading…" : "Submit KYC Details"}
               </button>
+
             </form>
           )}
         </>
@@ -367,12 +435,18 @@ export default function Kal() {
                 ></textarea>
               </div>
 
+              {buyerError && (
+                <p className="rounded-lg bg-red-50 px-3 py-2 text-xs font-medium text-red-700">{buyerError}</p>
+              )}
+
               <button
                 type="submit"
-                className="w-full py-3 bg-indigo-600 text-white font-medium rounded-xl hover:bg-indigo-700 transition duration-200 text-sm shadow-md"
+                disabled={buyerBusy}
+                className="w-full py-3 bg-indigo-600 text-white font-medium rounded-xl hover:bg-indigo-700 transition duration-200 text-sm shadow-md disabled:opacity-60"
               >
-                Submit Buyer Requirement
+                {buyerBusy ? "Submitting…" : "Submit Buyer Requirement"}
               </button>
+
             </form>
           )}
         </>
