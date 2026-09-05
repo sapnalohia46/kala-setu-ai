@@ -11,7 +11,7 @@ export type BackendCatalog = {
   seo_tags: string[];
 };
 
-const BASE_URL = (import.meta.env['VITE_API_BASE_URL'] as string | undefined)?.replace(/\/$/, "") ?? "";
+const BASE_URL = "https://sih-backend-9gq4.onrender.com";
 
 function dataUrlToBlob(dataUrl: string): Blob {
   const [meta, base64] = dataUrl.split(",");
