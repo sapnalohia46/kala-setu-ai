@@ -2,7 +2,8 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useRef, useState } from "react";
 import { ArrowLeft, ArrowRight, Camera, Check, FileText, Mic, MicOff, Sparkles, Trash2, Upload } from "lucide-react";
 import { AppShell, Button, DemoBanner, SectionHeading } from "@/components/kala/ui";
-import { generateCatalogue, updateDraft } from "@/lib/draft-store";
+import { updateDraft } from "@/lib/draft-store";
+import { generateCatalogueFromBackend } from "@/lib/catalog-api";
 import { useSpeech } from "@/lib/use-speech";
 
 export const Route = createFileRoute("/add-product")({ head: () => ({ meta: [{ title: "Add Your Craft — sih 2026" }, { name: "description", content: "Create a professional craft catalogue using a photo, your voice, or simple details." }, { property: "og:title", content: "Add Your Craft — sih 2026" }, { property: "og:description", content: "Use AI to turn your craft into a market-ready catalogue." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary_large_image" }] }), component: AddProduct });
@@ -33,12 +34,20 @@ function AddProduct() {
     reader.readAsDataURL(file);
   }
 
-  function handleGenerate() {
-    if (!photo && !spoken.trim()) { setPhotoError("Add a photo or describe your craft first."); return; }
+  async function handleGenerate() {
+    if (!photo) { setPhotoError("Add a photo of your craft first."); return; }
+    setPhotoError(null);
     setBusy(true);
     if (speech.listening) speech.stop();
-    updateDraft(generateCatalogue({ photo, transcript: spoken }));
-    window.setTimeout(() => navigate({ to: "/catalogue" }), 700);
+    try {
+      const draft = await generateCatalogueFromBackend({ photo, transcript: spoken });
+      updateDraft(draft);
+      navigate({ to: "/catalogue" });
+    } catch (error) {
+      setPhotoError(error instanceof Error ? error.message : "We could not create your catalogue. Please try again.");
+    } finally {
+      setBusy(false);
+    }
   }
 
   return <AppShell title="Add your craft" eyebrow="New product"><div className="mx-auto max-w-4xl">

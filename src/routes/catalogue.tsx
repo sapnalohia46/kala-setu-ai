@@ -3,7 +3,8 @@ import { useState } from "react";
 import { ArrowLeft, Check, Edit3, Languages, RefreshCw, Sparkles, Tag, WandSparkles } from "lucide-react";
 import pottery from "@/assets/blue-pottery-vase.jpg";
 import { AppShell, Button, DemoBanner, SectionHeading } from "@/components/kala/ui";
-import { generateCatalogue, publishDraft, updateDraft, useDraft } from "@/lib/draft-store";
+import { publishDraft, updateDraft, useDraft } from "@/lib/draft-store";
+import { generateCatalogueFromBackend } from "@/lib/catalog-api";
 
 export const Route = createFileRoute("/catalogue")({ head: () => ({ meta: [{ title: "AI Smart Catalogue — sih 2026" }, { name: "description", content: "Review and edit an AI-generated craft catalogue before publishing." }, { property: "og:title", content: "AI Smart Catalogue — sih 2026" }, { property: "og:description", content: "Review every AI suggestion before your craft goes to market." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary_large_image" }] }), component: Catalogue });
 
@@ -11,12 +12,25 @@ function Catalogue() {
   const navigate = useNavigate();
   const draft = useDraft();
   const [editing, setEditing] = useState(false);
-  const [translated, setTranslated] = useState(false);
+  const [regenerating, setRegenerating] = useState(false);
+  const [apiError, setApiError] = useState<string | null>(null);
 
   const image = draft.photo ?? pottery;
-  const title = draft.title || "Handcrafted Jaipur Blue Pottery Vase";
-  const description = translated ? "हस्तनिर्मित जयपुर ब्लू पॉटरी फूलदान — हाथ से बनाया गया, पारंपरिक नीली चित्रकारी के साथ।" : draft.description || "A hand-painted Jaipur blue pottery vase featuring intricate cobalt floral motifs on a soft ivory base.";
-  const tags = draft.tags.length ? draft.tags : ["Handmade", "Traditional Craft", "Blue Pottery", "Jaipur", "Home Décor"];
+  const title = draft.title;
+  const description = draft.description;
+  const tags = draft.tags;
+
+  async function regenerate() {
+    setApiError(null);
+    setRegenerating(true);
+    try {
+      updateDraft(await generateCatalogueFromBackend({ photo: draft.photo, transcript: draft.transcript }));
+    } catch (error) {
+      setApiError(error instanceof Error ? error.message : "We could not refresh this catalogue.");
+    } finally {
+      setRegenerating(false);
+    }
+  }
 
   return <AppShell title="AI smart catalogue" eyebrow="Review before publishing"><div className="mx-auto max-w-5xl">
     <Link to="/add-product" className="mb-6 inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"><ArrowLeft className="size-4" />Back to add product</Link>
@@ -25,7 +39,7 @@ function Catalogue() {
     <div className="mt-7 grid gap-6 lg:grid-cols-[.85fr_1.15fr]">
       <div className="rounded-2xl border border-border bg-card p-3 shadow-sm">
         <img src={image} alt={title} className="aspect-square w-full rounded-xl object-cover" />
-        <div className="mt-3 flex items-center gap-2 rounded-xl bg-moss-soft px-3 py-2 text-xs text-moss"><Check className="size-4" />Image understood · {draft.craft || "Blue Pottery"}</div>
+        <div className="mt-3 flex items-center gap-2 rounded-xl bg-moss-soft px-3 py-2 text-xs text-moss"><Check className="size-4" />Image understood{draft.craft ? ` · ${draft.craft}` : ""}</div>
       </div>
       <div className="rounded-2xl border border-border bg-card p-5 shadow-sm sm:p-7">
         <div className="flex items-start justify-between gap-4">
@@ -36,10 +50,10 @@ function Catalogue() {
           <span className="flex items-center gap-1 rounded-full bg-saffron/20 px-2.5 py-1 font-mono text-[10px] uppercase text-saffron-foreground"><Sparkles className="size-3" />Draft</span>
         </div>
         <div className="mt-6 grid gap-5 sm:grid-cols-2">
-          <Field label="Category" value={draft.category || "Home Décor → Traditional Pottery"} editing={editing} onChange={(value) => updateDraft({ category: value })} />
-          <Field label="Craft" value={draft.craft || "Jaipur Blue Pottery"} editing={editing} onChange={(value) => updateDraft({ craft: value })} />
-          <Field label="Material" value={draft.material || "Ceramic"} editing={editing} onChange={(value) => updateDraft({ material: value })} />
-          <Field label="Suggested price" value={draft.price || "₹850 – ₹1,050"} editing={editing} onChange={(value) => updateDraft({ price: value })} />
+          <Field label="Category" value={draft.category} editing={editing} onChange={(value) => updateDraft({ category: value })} />
+          <Field label="Craft" value={draft.craft} editing={editing} onChange={(value) => updateDraft({ craft: value })} />
+          <Field label="Material" value={draft.material} editing={editing} onChange={(value) => updateDraft({ material: value })} />
+          <Field label="Suggested price" value={draft.price} editing={editing} onChange={(value) => updateDraft({ price: value })} />
         </div>
         <div className="mt-6">
           <p className="text-xs font-semibold uppercase tracking-[.12em] text-muted-foreground">Product description</p>
@@ -52,9 +66,10 @@ function Catalogue() {
         <div className="mt-6 flex items-center gap-2 rounded-xl bg-indigo-soft p-3 text-sm text-indigo"><Languages className="size-4 shrink-0" /><span><strong>Available languages:</strong> English · हिन्दी</span></div>
         <div className="mt-7 grid gap-2 sm:grid-cols-3">
           <Button variant="quiet" onClick={() => setEditing((value) => !value)}><Edit3 className="size-4" />{editing ? "Done editing" : "Edit"}</Button>
-          <Button variant="quiet" onClick={() => updateDraft(generateCatalogue({ photo: draft.photo, transcript: draft.transcript }))}><RefreshCw className="size-4" />Regenerate</Button>
-          <Button variant="quiet" onClick={() => setTranslated((value) => !value)}><WandSparkles className="size-4" />{translated ? "English" : "Translate"}</Button>
+          <Button variant="quiet" onClick={regenerate} disabled={regenerating}><RefreshCw className="size-4" />{regenerating ? "Regenerating…" : "Regenerate"}</Button>
+          <Button variant="quiet" onClick={regenerate} disabled={regenerating}><WandSparkles className="size-4" />Refresh from AI</Button>
         </div>
+        {apiError && <p role="alert" className="mt-3 text-sm font-medium text-destructive">{apiError}</p>}
         <Button className="mt-3 min-h-12 w-full" onClick={() => { publishDraft(pottery); navigate({ to: "/publish-success" }); }}>Confirm &amp; publish <Check className="size-4" /></Button>
       </div>
     </div>
