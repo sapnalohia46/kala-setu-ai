@@ -2,7 +2,8 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useRef, useState } from "react";
 import { ArrowLeft, ArrowRight, Camera, Check, FileText, Mic, MicOff, Sparkles, Trash2, Upload } from "lucide-react";
 import { AppShell, Button, DemoBanner, SectionHeading } from "@/components/kala/ui";
-import { generateCatalogue, updateDraft } from "@/lib/draft-store";
+import { updateDraft } from "@/lib/draft-store";
+import { generateCatalogueFromBackend } from "@/lib/catalog-api";
 import { useSpeech } from "@/lib/use-speech";
 
 export const Route = createFileRoute("/add-product")({ head: () => ({ meta: [{ title: "Add Your Craft — sih 2026" }, { name: "description", content: "Create a professional craft catalogue using a photo, your voice, or simple details." }, { property: "og:title", content: "Add Your Craft — sih 2026" }, { property: "og:description", content: "Use AI to turn your craft into a market-ready catalogue." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary_large_image" }] }), component: AddProduct });
