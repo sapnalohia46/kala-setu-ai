@@ -15,6 +15,7 @@ function Catalogue() {
   const [editing, setEditing] = useState(false);
   const [regenerating, setRegenerating] = useState(false);
   const [apiError, setApiError] = useState<string | null>(null);
+  const [publishing, setPublishing] = useState(false);
 
   const image = draft.photo ?? pottery;
   const title = draft.title;
