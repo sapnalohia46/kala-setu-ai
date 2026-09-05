@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { opportunities, type Opportunity } from "@/lib/kala-data";
 import { Button, MatchBar, Score, StatusBadge } from "@/components/kala/ui";
+import { supabase } from "@/integrations/supabase/client";
+
 
 // ==========================================
 // 1. COMBINED KARIGAR & BUYER FORM WITH PHOTO UPLOAD
