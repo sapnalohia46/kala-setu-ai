@@ -44,11 +44,14 @@ function AddProduct() {
     setBusy(true);
     if (speech.listening) speech.stop();
     try {
-      const draft = await generateCatalogueFromBackend({ photo, transcript: spoken });
+      const draft = await generateCatalogue({ photo, transcript: spoken });
       updateDraft(draft);
+      toast.success("Photo uploaded and catalogue created");
       navigate({ to: "/catalogue" });
     } catch (error) {
-      setPhotoError(error instanceof Error ? error.message : "We could not create your catalogue. Please try again.");
+      const message = error instanceof Error ? error.message : "We could not create your catalogue. Please try again.";
+      setPhotoError(message);
+      toast.error(message);
     } finally {
       setBusy(false);
     }
