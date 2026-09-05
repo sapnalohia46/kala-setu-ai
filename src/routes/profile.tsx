@@ -134,10 +134,9 @@ function Profile() {
               src="https://docs.google.com/forms/d/e/1FAIpQLSeAlngGQ3eY8EOvSPJOVkHADex-jxdtO0kTJSTx-ox-cUdumw/viewform?embedded=true"
               width="100%"
               height="600"
-              style={{ border: 0 }}
               onLoad={() => setIframeLoaded(true)}
               title="Karigar Verification Form"
-              className="block h-[600px] w-full bg-white"
+              className="block h-[600px] w-full border-0 bg-white"
             />
           </div>
         </div>
