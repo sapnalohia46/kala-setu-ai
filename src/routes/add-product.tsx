@@ -30,7 +30,10 @@ function AddProduct() {
     if (!file.type.startsWith("image/")) { setPhotoError("Please choose a JPG or PNG image."); return; }
     if (file.size > 8 * 1024 * 1024) { setPhotoError("That image is larger than 8 MB. Please choose a smaller photo."); return; }
     const reader = new FileReader();
-    reader.onload = () => setPhoto(typeof reader.result === "string" ? reader.result : null);
+    reader.onload = () => {
+      setPhoto(typeof reader.result === "string" ? reader.result : null);
+      toast.success("Photo added successfully");
+    };
     reader.onerror = () => setPhotoError("We could not read that photo. Please try again.");
     reader.readAsDataURL(file);
   }
