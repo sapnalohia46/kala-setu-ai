@@ -16,7 +16,7 @@ export const Route = createFileRoute("/kal")({
   component: KalPage,
 });
 
-function KalPage() {
+export default function KalPage() {
   return (
     <AppShell title="Karigar & Buyer Forms" eyebrow="Get started">
       <div className="mx-auto max-w-3xl">
