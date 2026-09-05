@@ -63,7 +63,7 @@ function buildDraft(photo: string | null, transcript: string): Draft {
 /** Upload the photo to cloud storage and build the catalogue draft. */
 export async function generateCatalogue(input: { photo: string | null; transcript: string }): Promise<Draft> {
   if (!input.photo) throw new Error("Add a photo so we can create your catalogue.");
-  const { url } = await uploadProductPhoto(input.photo);
+  const url = input.photo.startsWith("data:") ? (await uploadProductPhoto(input.photo)).url : input.photo;
   return buildDraft(url, input.transcript);
 }
 
