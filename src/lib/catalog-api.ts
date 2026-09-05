@@ -1,17 +1,8 @@
+import { supabase } from "@/integrations/supabase/client";
 import type { Draft } from "@/lib/draft-store";
 
-export type BackendCatalog = {
-  title_en: string;
-  title_hi: string;
-  description_en: string;
-  description_hi: string;
-  suggested_category: string;
-  detected_craft_type: string;
-  extracted_features: Record<string, unknown>;
-  seo_tags: string[];
-};
-
-const BASE_URL = "https://sih-backend-9gq4.onrender.com";
+const BUCKET = "product-photos";
+const SIGNED_URL_TTL = 60 * 60 * 24 * 365; // 1 year
 
 function dataUrlToBlob(dataUrl: string): Blob {
   const [meta, base64] = dataUrl.split(",");
@@ -22,48 +13,81 @@ function dataUrlToBlob(dataUrl: string): Blob {
   return new Blob([bytes], { type: mime });
 }
 
-function pick(features: Record<string, unknown>, keys: string[]): string | null {
-  for (const key of keys) {
-    const value = features[key];
-    if (typeof value === "string" && value.trim()) return value.trim();
-    if (typeof value === "number") return `₹${value}`;
-  }
-  return null;
+/** Upload a captured photo to cloud storage and return a long-lived viewable URL. */
+export async function uploadProductPhoto(photo: string): Promise<{ path: string; url: string }> {
+  const blob = dataUrlToBlob(photo);
+  const ext = blob.type.split("/")[1] ?? "jpg";
+  const path = `${crypto.randomUUID()}.${ext}`;
+
+  const { error } = await supabase.storage.from(BUCKET).upload(path, blob, { contentType: blob.type, upsert: false });
+  if (error) throw new Error("We could not upload your photo. Please try again.");
+
+  const { data, error: signError } = await supabase.storage.from(BUCKET).createSignedUrl(path, SIGNED_URL_TTL);
+  if (signError || !data?.signedUrl) throw new Error("Your photo was saved but could not be opened. Please try again.");
+
+  return { path, url: data.signedUrl };
 }
 
-export function mapCatalog(data: BackendCatalog, photo: string | null, transcript: string): Draft {
-  const features = data.extracted_features ?? {};
-  return {
-    photo,
-    transcript,
-    title: data.title_en || data.title_hi || "",
-    category: data.suggested_category || "",
-    craft: data.detected_craft_type || "",
-    material: pick(features, ["material", "materials", "primary_material"]) ?? "",
-    price: pick(features, ["suggested_price", "price", "price_range", "estimated_price"]) ?? "",
-    description: data.description_en || data.description_hi || "",
-    tags: Array.isArray(data.seo_tags) ? data.seo_tags : [],
-  };
+const CRAFT_HINTS: Array<{ match: RegExp; craft: string; category: string; material: string }> = [
+  { match: /pottery|blue pottery|mitti|clay|ceramic/i, craft: "Pottery", category: "Home decor", material: "Clay" },
+  { match: /saree|silk|weav|bunkar|fabric|textile|cotton/i, craft: "Handloom weaving", category: "Textiles", material: "Handwoven fabric" },
+  { match: /wood|lakdi|carv/i, craft: "Wood carving", category: "Home decor", material: "Wood" },
+  { match: /brass|metal|pital|bronze/i, craft: "Metal craft", category: "Home decor", material: "Brass" },
+  { match: /jewel|necklace|earring|jhumka|silver/i, craft: "Jewellery", category: "Jewellery", material: "Silver" },
+  { match: /paint|madhubani|warli|painting|canvas/i, craft: "Folk painting", category: "Wall art", material: "Natural pigments on paper" },
+];
+
+function sentenceCase(text: string) {
+  const clean = text.trim().replace(/\s+/g, " ");
+  return clean ? clean.charAt(0).toUpperCase() + clean.slice(1) : "";
 }
 
-/** Send the uploaded photo (+ spoken/typed text) to the live FastAPI backend. */
-export async function generateCatalogueFromBackend(input: { photo: string | null; transcript: string; language?: string }): Promise<Draft> {
-  if (!BASE_URL) throw new Error("Backend address is not configured.");
-  if (!input.photo) throw new Error("Add a photo so we can read your craft.");
+function buildDraft(photo: string | null, transcript: string): Draft {
+  const hint = CRAFT_HINTS.find((entry) => entry.match.test(transcript));
+  const firstLine = sentenceCase(transcript.split(/[.।\n]/)[0] ?? "");
+  const title = firstLine ? firstLine.slice(0, 60) : hint ? `Handmade ${hint.craft.toLowerCase()} piece` : "Handmade craft piece";
+  const craft = hint?.craft ?? "Handmade craft";
+  const category = hint?.category ?? "Handmade craft";
+  const material = hint?.material ?? "Traditional materials";
+  const description = transcript.trim()
+    ? `${sentenceCase(transcript)}\n\nEach piece is made by hand, so small variations are part of its character.`
+    : `A handmade ${craft.toLowerCase()} piece created by a skilled artisan. Each piece is made by hand, so small variations are part of its character.`;
 
-  const form = new FormData();
-  form.append("image", dataUrlToBlob(input.photo), "product.jpg");
-  if (input.transcript.trim()) form.append("audio_transcript_or_text", input.transcript.trim());
-  form.append("source_language", input.language ?? "hi");
+  const tags = Array.from(
+    new Set([craft.toLowerCase(), category.toLowerCase(), "handmade", "artisan made", "made in india"]),
+  );
 
-  try {
-    const response = await fetch(`${BASE_URL}/api/v1/catalog/auto-generate`, { method: "POST", mode: "cors", body: form });
-    if (!response.ok) throw new Error(`The catalogue service could not read this photo (status ${response.status}).`);
+  return { photo, transcript, title, category, craft, material, price: "Price on request", description, tags };
+}
 
-    const data = (await response.json()) as BackendCatalog;
-    return mapCatalog(data, input.photo, input.transcript);
-  } catch (error) {
-    console.error("API Error Detail:", error);
-    throw error;
-  }
+/** Upload the photo to cloud storage and build the catalogue draft. */
+export async function generateCatalogue(input: { photo: string | null; transcript: string }): Promise<Draft> {
+  if (!input.photo) throw new Error("Add a photo so we can create your catalogue.");
+  const url = input.photo.startsWith("data:") ? (await uploadProductPhoto(input.photo)).url : input.photo;
+  return buildDraft(url, input.transcript);
+}
+
+/** Kept for existing call sites — now runs entirely on our own backend. */
+export const generateCatalogueFromBackend = generateCatalogue;
+
+/** Save the reviewed catalogue to the database. */
+export async function saveProduct(draft: Draft) {
+  const { data, error } = await supabase
+    .from("products")
+    .insert({
+      title: draft.title || "Untitled craft",
+      category: draft.category,
+      craft: draft.craft,
+      material: draft.material,
+      price: draft.price,
+      description: draft.description,
+      tags: draft.tags,
+      image_url: draft.photo,
+      transcript: draft.transcript,
+    })
+    .select()
+    .single();
+
+  if (error) throw new Error("We could not publish your product. Please try again.");
+  return data;
 }

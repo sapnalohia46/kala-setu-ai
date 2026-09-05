@@ -2,8 +2,9 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useRef, useState } from "react";
 import { ArrowLeft, ArrowRight, Camera, Check, FileText, Mic, MicOff, Sparkles, Trash2, Upload } from "lucide-react";
 import { AppShell, Button, DemoBanner, SectionHeading } from "@/components/kala/ui";
+import { toast } from "sonner";
 import { updateDraft } from "@/lib/draft-store";
-import { generateCatalogueFromBackend } from "@/lib/catalog-api";
+import { generateCatalogue } from "@/lib/catalog-api";
 import { useSpeech } from "@/lib/use-speech";
 
 export const Route = createFileRoute("/add-product")({ head: () => ({ meta: [{ title: "Add Your Craft — sih 2026" }, { name: "description", content: "Create a professional craft catalogue using a photo, your voice, or simple details." }, { property: "og:title", content: "Add Your Craft — sih 2026" }, { property: "og:description", content: "Use AI to turn your craft into a market-ready catalogue." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary_large_image" }] }), component: AddProduct });
@@ -29,7 +30,10 @@ function AddProduct() {
     if (!file.type.startsWith("image/")) { setPhotoError("Please choose a JPG or PNG image."); return; }
     if (file.size > 8 * 1024 * 1024) { setPhotoError("That image is larger than 8 MB. Please choose a smaller photo."); return; }
     const reader = new FileReader();
-    reader.onload = () => setPhoto(typeof reader.result === "string" ? reader.result : null);
+    reader.onload = () => {
+      setPhoto(typeof reader.result === "string" ? reader.result : null);
+      toast.success("Photo added successfully");
+    };
     reader.onerror = () => setPhotoError("We could not read that photo. Please try again.");
     reader.readAsDataURL(file);
   }
@@ -40,11 +44,14 @@ function AddProduct() {
     setBusy(true);
     if (speech.listening) speech.stop();
     try {
-      const draft = await generateCatalogueFromBackend({ photo, transcript: spoken });
+      const draft = await generateCatalogue({ photo, transcript: spoken });
       updateDraft(draft);
+      toast.success("Photo uploaded and catalogue created");
       navigate({ to: "/catalogue" });
     } catch (error) {
-      setPhotoError(error instanceof Error ? error.message : "We could not create your catalogue. Please try again.");
+      const message = error instanceof Error ? error.message : "We could not create your catalogue. Please try again.";
+      setPhotoError(message);
+      toast.error(message);
     } finally {
       setBusy(false);
     }

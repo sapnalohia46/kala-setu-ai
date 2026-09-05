@@ -3,8 +3,9 @@ import { useState } from "react";
 import { ArrowLeft, Check, Edit3, Languages, RefreshCw, Sparkles, Tag, WandSparkles } from "lucide-react";
 import pottery from "@/assets/blue-pottery-vase.jpg";
 import { AppShell, Button, DemoBanner, SectionHeading } from "@/components/kala/ui";
+import { toast } from "sonner";
 import { publishDraft, updateDraft, useDraft } from "@/lib/draft-store";
-import { generateCatalogueFromBackend } from "@/lib/catalog-api";
+import { generateCatalogue, saveProduct } from "@/lib/catalog-api";
 
 export const Route = createFileRoute("/catalogue")({ head: () => ({ meta: [{ title: "AI Smart Catalogue — sih 2026" }, { name: "description", content: "Review and edit an AI-generated craft catalogue before publishing." }, { property: "og:title", content: "AI Smart Catalogue — sih 2026" }, { property: "og:description", content: "Review every AI suggestion before your craft goes to market." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary_large_image" }] }), component: Catalogue });
 
@@ -14,6 +15,7 @@ function Catalogue() {
   const [editing, setEditing] = useState(false);
   const [regenerating, setRegenerating] = useState(false);
   const [apiError, setApiError] = useState<string | null>(null);
+  const [publishing, setPublishing] = useState(false);
 
   const image = draft.photo ?? pottery;
   const title = draft.title;
@@ -24,11 +26,31 @@ function Catalogue() {
     setApiError(null);
     setRegenerating(true);
     try {
-      updateDraft(await generateCatalogueFromBackend({ photo: draft.photo, transcript: draft.transcript }));
+      updateDraft(await generateCatalogue({ photo: draft.photo, transcript: draft.transcript }));
+      toast.success("Catalogue refreshed");
     } catch (error) {
-      setApiError(error instanceof Error ? error.message : "We could not refresh this catalogue.");
+      const message = error instanceof Error ? error.message : "We could not refresh this catalogue.";
+      setApiError(message);
+      toast.error(message);
     } finally {
       setRegenerating(false);
+    }
+  }
+
+  async function handlePublish() {
+    setApiError(null);
+    setPublishing(true);
+    try {
+      await saveProduct(draft);
+      publishDraft(pottery);
+      toast.success("Your product is published");
+      navigate({ to: "/publish-success" });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "We could not publish your product.";
+      setApiError(message);
+      toast.error(message);
+    } finally {
+      setPublishing(false);
     }
   }
 
@@ -70,7 +92,7 @@ function Catalogue() {
           <Button variant="quiet" onClick={regenerate} disabled={regenerating}><WandSparkles className="size-4" />Refresh from AI</Button>
         </div>
         {apiError && <p role="alert" className="mt-3 text-sm font-medium text-destructive">{apiError}</p>}
-        <Button className="mt-3 min-h-12 w-full" onClick={() => { publishDraft(pottery); navigate({ to: "/publish-success" }); }}>Confirm &amp; publish <Check className="size-4" /></Button>
+        <Button className="mt-3 min-h-12 w-full" onClick={handlePublish} disabled={publishing}>{publishing ? "Publishing…" : "Confirm & publish"} <Check className="size-4" /></Button>
       </div>
     </div>
   </div></AppShell>;
