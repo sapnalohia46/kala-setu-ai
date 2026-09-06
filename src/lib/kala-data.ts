@@ -1,18 +1,20 @@
-import pottery from "@/assets/blue-pottery-vase.jpg";
+import silkSaree from "@/assets/silk-saree.jpg";
+import woodenToy from "@/assets/wooden-toy.jpg";
+import brassIdol from "@/assets/brass-idol.jpg";
 import textiles from "@/assets/handwoven-textiles.jpg";
 import baskets from "@/assets/jute-baskets.jpg";
 import meena from "@/assets/meena-portrait.jpg";
 
-export type Product = { id: string; title: string; category: string; price: string; status: "Published" | "Draft" | "Needs Review"; image: string; imageAlt: string };
+export type Product = { id: string; title: string; category: string; price: string; status: "Published" | "Draft" | "Needs Review"; image: string; imageAlt: string; description?: string; tags?: string[] };
 export type Opportunity = { id: string; title: string; buyer: string; score: number; quantity: string; budget: string; location: string; deadline: string; requirement: string; category: string; materials: string; reasons: string[] };
 export type Enquiry = { id: string; status: "New" | "Accepted" | "In Discussion" | "Completed"; buyer: string; interest: string; quantity: string; budget: string; deadline: string; delivery: string };
 
 export const demoArtisan = { name: "Meena Devi", location: "Jaipur, Rajasthan", craft: "Jaipur Blue Pottery", experience: "12 years", languages: ["हिन्दी", "English"], capacity: "40–60 pieces / month", image: meena };
 
 export const products: Product[] = [
-  { id: "blue-vase", title: "Handcrafted Blue Pottery Vase", category: "Home Décor · Pottery", price: "₹950", status: "Published", image: pottery, imageAlt: "Hand-painted Jaipur blue pottery vase" },
-  { id: "lotus-plate", title: "Lotus Motif Serving Plate", category: "Tableware · Pottery", price: "₹680", status: "Published", image: pottery, imageAlt: "Blue and white handmade ceramic plate" },
-  { id: "gift-set", title: "Festive Blue Pottery Gift Set", category: "Gifting · Pottery", price: "₹1,450", status: "Needs Review", image: pottery, imageAlt: "Decorative blue pottery gift set" },
+  { id: "silk-saree", title: "Handmade Silk Saree", category: "Textiles · Handloom", price: "₹4,999", status: "Published", image: silkSaree, imageAlt: "Handwoven Chanderi silk saree with gold zari border", description: "A Chanderi handloom silk saree woven on a pit loom over nine days, coloured with plant-based eco dyes and finished with a fine gold zari border.", tags: ["Chanderi Weave", "Eco Dyes"] },
+  { id: "wooden-toy", title: "Handcrafted Wooden Toy", category: "Toys · Woodcraft", price: "₹899", status: "Published", image: woodenToy, imageAlt: "Handcrafted natural wooden elephant toy on wheels", description: "A hand-turned wooden elephant on wheels, shaped from sustainably sourced wood and finished with non-toxic, child-safe colours.", tags: ["Natural Wood", "Non-Toxic"] },
+  { id: "brass-idol", title: "Vintage Brass Idol", category: "Home Décor · Metal Craft", price: "₹2,499", status: "Published", image: brassIdol, imageAlt: "Hand-engraved solid brass idol with warm patina", description: "A solid brass idol cast by hand and engraved with traditional motifs, carrying the warm patina that only slow, honest metalwork gives.", tags: ["Solid Brass", "Hand-Engraved"] },
 ];
 
 export const opportunities: Opportunity[] = [
