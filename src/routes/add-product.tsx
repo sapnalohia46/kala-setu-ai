@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useRef, useState } from "react";
 import { ArrowLeft, ArrowRight, Camera, Check, FileText, Mic, MicOff, Sparkles, Trash2, Upload } from "lucide-react";
-import { AppShell, Button, DemoBanner, SectionHeading } from "@/components/kala/ui";
+import { AppShell, Button, SectionHeading } from "@/components/kala/ui";
 import { toast } from "sonner";
 import { updateDraft } from "@/lib/draft-store";
 import { generateCatalogue } from "@/lib/catalog-api";
@@ -60,7 +60,7 @@ function AddProduct() {
   return <AppShell title="Add your craft" eyebrow="New product"><div className="mx-auto max-w-4xl">
     <Link to="/dashboard" className="mb-6 inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"><ArrowLeft className="size-4" />Back to home</Link>
     <SectionHeading eyebrow="Simple is powerful" title="Add your craft" description="Choose the easiest way to tell us about one product." />
-    <DemoBanner />
+    
 
     <div className="mt-7 grid gap-4 md:grid-cols-3">
       <MethodCard icon={Camera} title="Take / upload photo" copy="Show us the product. AI will look for shape, colour, and craft details." active={method === "photo"} onClick={() => setMethod("photo")} />

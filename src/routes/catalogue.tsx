@@ -2,7 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { ArrowLeft, Check, Edit3, Languages, RefreshCw, Sparkles, Tag, WandSparkles } from "lucide-react";
 import pottery from "@/assets/blue-pottery-vase.jpg";
-import { AppShell, Button, DemoBanner, SectionHeading } from "@/components/kala/ui";
+import { AppShell, Button, SectionHeading } from "@/components/kala/ui";
 import { toast } from "sonner";
 import { publishDraft, updateDraft, useDraft } from "@/lib/draft-store";
 import { generateCatalogue, saveProduct } from "@/lib/catalog-api";
@@ -57,7 +57,7 @@ function Catalogue() {
   return <AppShell title="AI smart catalogue" eyebrow="Review before publishing"><div className="mx-auto max-w-5xl">
     <Link to="/add-product" className="mb-6 inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"><ArrowLeft className="size-4" />Back to add product</Link>
     <SectionHeading eyebrow="Step 2 · Your review matters" title="Here’s what AI understood" description="These are suggestions, not final decisions. Edit anything that doesn’t sound like you." />
-    <DemoBanner />
+    
     <div className="mt-7 grid gap-6 lg:grid-cols-[.85fr_1.15fr]">
       <div className="rounded-2xl border border-border bg-card p-3 shadow-sm">
         <img src={image} alt={title} className="aspect-square w-full rounded-xl object-cover" />

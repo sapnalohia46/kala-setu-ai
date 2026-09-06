@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, MapPin, Sparkles } from "lucide-react";
 import { artisans } from "@/lib/kala-data";
-import { AppShell, Button, DemoBanner, Score, SectionHeading } from "@/components/kala/ui";
+import { AppShell, Button, Score, SectionHeading } from "@/components/kala/ui";
 
 export const Route = createFileRoute("/buyer/matches")({
   head: () => ({
@@ -21,7 +21,7 @@ function BuyerMatches() {
   return (
     <AppShell role="buyer" title="Find artisans" eyebrow="AI-ranked for your brief">
       <div className="mx-auto max-w-6xl">
-        <DemoBanner />
+        
         <div className="mt-7">
           <SectionHeading eyebrow="Best matches" title="Artisans who fit your need" description="Ranked by craft fit, price compatibility, capacity, and location." />
         </div>

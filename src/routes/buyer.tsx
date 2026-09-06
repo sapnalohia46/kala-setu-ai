@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, BriefcaseBusiness, MessageCircle, Search, UsersRound } from "lucide-react";
 import { artisans, opportunities } from "@/lib/kala-data";
-import { AppShell, Button, DemoBanner, SectionHeading } from "@/components/kala/ui";
+import { AppShell, Button, SectionHeading } from "@/components/kala/ui";
 
 export const Route = createFileRoute("/buyer")({
   head: () => ({
@@ -21,7 +21,7 @@ function BuyerHome() {
   return (
     <AppShell role="buyer" title="Buyer workspace" eyebrow="Find the craft that fits your brief">
       <div className="mx-auto max-w-6xl">
-        <DemoBanner />
+        
         <section className="mt-7 rounded-2xl border border-indigo/15 bg-indigo-soft p-5 sm:p-7">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>

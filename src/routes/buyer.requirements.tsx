@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, Mic, Sparkles } from "lucide-react";
-import { AppShell, Button, DemoBanner, SectionHeading, VoiceButton } from "@/components/kala/ui";
+import { AppShell, Button, SectionHeading, VoiceButton } from "@/components/kala/ui";
 
 export const Route = createFileRoute("/buyer/requirements")({
   head: () => ({
@@ -20,7 +20,7 @@ function BuyerRequirements() {
   return (
     <AppShell role="buyer" title="New requirement" eyebrow="Tell us what you need">
       <div className="mx-auto max-w-3xl">
-        <DemoBanner />
+        
         <div className="mt-7">
           <SectionHeading eyebrow="Natural input" title="Describe your requirement" description="Type or speak in plain language. AI turns it into a structured brief artisans can respond to." />
         </div>
