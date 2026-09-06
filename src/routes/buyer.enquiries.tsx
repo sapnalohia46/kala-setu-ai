@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, MessageCircle } from "lucide-react";
 import { enquiries } from "@/lib/kala-data";
-import { AppShell, Button, DemoBanner, SectionHeading, StatusBadge } from "@/components/kala/ui";
+import { AppShell, Button, SectionHeading, StatusBadge } from "@/components/kala/ui";
 
 export const Route = createFileRoute("/buyer/enquiries")({
   head: () => ({
@@ -21,7 +21,7 @@ function BuyerEnquiries() {
   return (
     <AppShell role="buyer" title="Enquiries" eyebrow="Conversations with artisans">
       <div className="mx-auto max-w-5xl">
-        <DemoBanner />
+        
         <div className="mt-7">
           <SectionHeading eyebrow="Inbox" title="Artisans interested in your briefs" action={<Link to="/buyer/requirements"><Button variant="quiet">New requirement <ArrowRight className="size-4" /></Button></Link>} />
         </div>
